@@ -14,7 +14,7 @@ code {
 
 .container {
   position: relative;
-  height: 100vh;
+  min-height: 100vh;
   padding-top: 1rem;
   background: #ab9d9d url("./imgscr/vintage-grunge-paper-background.jpg") center
     center/cover no-repeat;
@@ -33,4 +33,13 @@ code {
   margin: auto;
   border-radius: 12px;
   padding-left: 38%;
+}
+.body{
+  position: relative;
+  border: 0px solid;
+  width: 80%;
+  height: fit-content;
+  border-radius: 10px;
+  background-color: rgba(83, 80, 80, 0.2);
+  margin-left:10%;
 }

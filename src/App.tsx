@@ -1,22 +1,31 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-interface DictionaryData {
-  word:string;
+interface ApiResponse {
+  word: string;
+  phonetic: string;
+  meanings: {
+    partOfSpeech: string;
+    definitions: {
+      definition: string;
+      example?: string;
+      synonyms?:string;
+    }[];
+  }[];
 }
 
 function App() {
-  const [word, setWord] = useState(``);
-  const [data, setData] = useState<DictionaryData | null>(null);
+  const [word, setWord] = useState("");
+  const [data, setData] = useState<ApiResponse | null>(null);
   const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
 
-  const getword = (event: { key: string }) => {
+  const getWord = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       axios.get(url).then((response) => {
-        setData(response.data);
+        setData(response.data[0]); // Můžete získat první prvek z pole, pokud je to pole
         console.log(response.data);
       });
-      setWord(``);
+      setWord("");
     }
   };
 
@@ -30,7 +39,7 @@ function App() {
             <input
               value={word}
               onChange={(event) => setWord(event.target.value)}
-              onKeyDown={getword}
+              onKeyDown={getWord}
               placeholder="Enter word"
               type="text"
             />
@@ -39,16 +48,54 @@ function App() {
       </div>
       <div className="body">
         <div className="word">
-          <h2>Word: {data?.word} </h2>
+          <h1>{data?.word} </h1>
+          <h4>{data?.phonetic}</h4>
         </div>
         <div className="definition">
           <p>Definition/Meaning:</p>
+          {data?.meanings.map((part) => (
+            <div>
+              <ul>
+                {part.definitions.slice(0, 2).map((definition) => (
+                  <li>
+                    {definition?.definition}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
         <div className="example">
           <p>Example:</p>
+          {data?.meanings.map((part) => (
+            <div>
+              <ul>
+                {part.definitions.slice(0, 2).map((definition) => (
+                  <li>
+                     {definition.example && definition.example.length > 0
+              ? definition.example
+              : "-"}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
         <div className="synonym">
           <p>Synonym:</p>
+          {data?.meanings.map((part) => (
+            <div>
+              <ul>
+                {part.definitions.slice(0, 2).map((definition) => (
+                  <li>
+                    {definition.synonyms && definition.synonyms.length > 0
+              ? definition.synonyms
+              : "-"}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -57,3 +104,15 @@ function App() {
 
 export default App;
 //https://api.dictionaryapi.dev/api/v2/entries/en/hello
+/*{data?.meanings.map((part) => (
+            <div key={part.partOfSpeech}>
+              <h4>{part.partOfSpeech}</h4>
+              <ul>
+                {part.definitions.slice(0, 4).map((definition, index) => (
+                  <li key={index}>
+                    {definition.example && <span> - {definition.example}</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}*/ 
