@@ -9,7 +9,7 @@ interface ApiResponse {
     definitions: {
       definition: string;
       example?: string;
-      synonyms?:string;
+      synonyms?: string;
     }[];
   }[];
 }
@@ -56,10 +56,8 @@ function App() {
           {data?.meanings.map((part) => (
             <div>
               <ul>
-                {part.definitions.slice(0, 2).map((definition) => (
-                  <li>
-                    {definition?.definition}
-                  </li>
+                {part.definitions.slice(0, 1).map((definition) => (
+                  <li>{definition?.definition}</li>
                 ))}
               </ul>
             </div>
@@ -68,32 +66,39 @@ function App() {
         <div className="example">
           <p>Example:</p>
           {data?.meanings.map((part) => (
-            <div>
-              <ul>
-                {part.definitions.slice(0, 2).map((definition) => (
-                  <li>
-                     {definition.example && definition.example.length > 0
-              ? definition.example
-              : "-"}
-                  </li>
-                ))}
-              </ul>
+            <div key={part.partOfSpeech}>
+              {part.definitions.slice(0, 2).map((definition, index) => (
+                <div key={index}>
+                  {definition.example && definition.example.length > 0 && (
+                    <ul>
+                      {definition.example
+                        .split("\n")
+                        .map((example, exampleIndex) => (
+                          <li key={exampleIndex}>{example}</li>
+                        ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
             </div>
           ))}
         </div>
         <div className="synonym">
           <p>Synonym:</p>
           {data?.meanings.map((part) => (
-            <div>
-              <ul>
-                {part.definitions.slice(0, 2).map((definition) => (
-                  <li>
-                    {definition.synonyms && definition.synonyms.length > 0
-              ? definition.synonyms
-              : "-"}
-                  </li>
-                ))}
-              </ul>
+            <div key={part.partOfSpeech}>
+              {part.definitions.slice(0, 2).map((definition, index) => (
+                <div key={index}>
+                  {Array.isArray(definition.synonyms) &&
+                    definition.synonyms.length > 0 && (
+                      <ul>
+                        {definition.synonyms.map((synonym, synonymIndex) => (
+                          <li key={synonymIndex}>{synonym}</li>
+                        ))}
+                      </ul>
+                    )}
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -115,4 +120,16 @@ export default App;
                 ))}
               </ul>
             </div>
-          ))}*/ 
+          ))}*/
+
+/*{data?.meanings.map((part) => (
+              <ul>
+              {definition.synonyms && definition.synonyms.length > 0?
+                {part.definitions.slice(0, 2).map((definition) => (
+                  <li> 
+              definition.synonyms
+                </li>
+                ))}
+              : ""}
+              </ul>
+          ))} */
