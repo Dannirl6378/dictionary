@@ -5,11 +5,12 @@ interface ApiResponse {
   word: string;
   phonetic: string;
   meanings: {
+    synonyms: string;
     partOfSpeech: string;
     definitions: {
+      synonyms: string;
       definition: string;
       example?: string;
-      synonyms?: string;
     }[];
   }[];
 }
@@ -22,13 +23,24 @@ function App() {
   const getWord = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       axios.get(url).then((response) => {
-        setData(response.data[0]); // Můžete získat první prvek z pole, pokud je to pole
+        setData(response.data[0]);
         console.log(response.data);
       });
       setWord("");
     }
   };
-
+  console.log(
+    data?.meanings.map((part) => {
+      if (
+        part.synonyms &&
+        Array.isArray(part.synonyms) &&
+        part.synonyms.length > 0
+      ) {
+        return part.synonyms.join(", "); // Převede pole synonym na textový řetězec oddělený čárkami
+      }
+      return null; // Vrátí null, pokud nejsou žádná synonyma
+    })
+  );
   return (
     <div className="container">
       <div className="head">
@@ -52,19 +64,19 @@ function App() {
           <h4>{data?.phonetic}</h4>
         </div>
         <div className="definition">
-          <p>Definition/Meaning:</p>
-          {data?.meanings.map((part) => (
-            <div>
+          <h3>Definiton/Meaning:</h3>
+          {data?.meanings.map((part, index) => (
+            <div key={index}>
               <ul>
-                {part.definitions.slice(0, 1).map((definition) => (
-                  <li>{definition?.definition}</li>
+                {part.definitions.slice(0, 2).map((definition, defIndex) => (
+                  <li key={defIndex}>{definition?.definition}</li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
         <div className="example">
-          <p>Example:</p>
+          <h3>Example:</h3>
           {data?.meanings.map((part) => (
             <div key={part.partOfSpeech}>
               {part.definitions.slice(0, 2).map((definition, index) => (
@@ -85,20 +97,17 @@ function App() {
         </div>
         <div className="synonym">
           <p>Synonym:</p>
-          {data?.meanings.map((part) => (
-            <div key={part.partOfSpeech}>
-              {part.definitions.slice(0, 2).map((definition, index) => (
-                <div key={index}>
-                  {Array.isArray(definition.synonyms) &&
-                    definition.synonyms.length > 0 && (
-                      <ul>
-                        {definition.synonyms.map((synonym, synonymIndex) => (
-                          <li key={synonymIndex}>{synonym}</li>
-                        ))}
-                      </ul>
-                    )}
-                </div>
-              ))}
+          {data?.meanings.slice(0, 2).map((part) => (
+            <div key={part.partOfSpeech} className="columns">
+              {part.synonyms &&
+              Array.isArray(part.synonyms) &&
+              part.synonyms.length > 0 ? (
+                <ul>
+                  {part.synonyms.map((synonym, synonymIndex) => (
+                    <li key={synonymIndex}>{synonym}</li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
           ))}
         </div>
@@ -108,28 +117,35 @@ function App() {
 }
 
 export default App;
-//https://api.dictionaryapi.dev/api/v2/entries/en/hello
-/*{data?.meanings.map((part) => (
-            <div key={part.partOfSpeech}>
-              <h4>{part.partOfSpeech}</h4>
-              <ul>
-                {part.definitions.slice(0, 4).map((definition, index) => (
-                  <li key={index}>
-                    {definition.example && <span> - {definition.example}</span>}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}*/
+/* 
+hmm zkusim to jinak 
+jak sem předtim poslal tu datovou strukturu tak většina synonym byla prazdná 
+až na jeden řádek kde byla vypsána a já ted potřebuji aby to ověřilo všechna snynonyma a ty která nejsou prázdna tak se řádek nezobrazil a tam kde jsou vypsana tak aby se vypsali první 3 
+takže by to mohlo být neco jako 
 
-/*{data?.meanings.map((part) => (
-              <ul>
-              {definition.synonyms && definition.synonyms.length > 0?
-                {part.definitions.slice(0, 2).map((definition) => (
-                  <li> 
-              definition.synonyms
-                </li>
-                ))}
-              : ""}
-              </ul>
-          ))} */
+{data?.meanings.map((part) => (
+            <div key={part.partOfSpeech}> 
+            {part.definitions.synonyms.map((definition,index) => (
+              <div key={index}>
+              {Array.isArray.forEach(definition.synonyms) &&
+                    definition.synonyms.length > 0 && (
+
+
+
+                      {data?.meanings.map((part) => (
+            <div key={part.partOfSpeech}>
+              {part.definitions.slice(0, 2).map((definition, index) => (
+                <div key={index}>
+                  {Array.isArray(definition.synonyms) &&
+                    definition.synonyms?.length > 0 && (
+                      <ul>
+                        {definition.synonyms.map((synonym: string, synonymIndex) => (
+                          <li key={synonymIndex}>{synonym}</li>
+                        ))}
+                      </ul>
+                    )}
+                </div>
+              ))}
+            </div>
+          ))}
+              */

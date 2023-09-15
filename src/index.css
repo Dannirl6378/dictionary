@@ -43,3 +43,8 @@ code {
   background-color: rgba(83, 80, 80, 0.2);
   margin-left:10%;
 }
+.columns {
+  column-count: 3;
+  column-gap: 21px;
+  column-rule: 1px none rgb(2, 3, 3)F;
+}
