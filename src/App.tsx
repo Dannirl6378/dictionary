@@ -64,6 +64,7 @@ function App() {
           <h4>{data?.phonetic}</h4>
         </div>
         <div className="definition">
+          <h3>Definiton/Meaning:</h3>
           {data?.meanings.map((part, index) => (
             <div key={index}>
               <ul>
@@ -96,8 +97,8 @@ function App() {
         </div>
         <div className="synonym">
           <p>Synonym:</p>
-          {data?.meanings.map((part) => (
-            <div key={part.partOfSpeech}>
+          {data?.meanings.slice(0, 2).map((part) => (
+            <div key={part.partOfSpeech} className="columns">
               {part.synonyms &&
               Array.isArray(part.synonyms) &&
               part.synonyms.length > 0 ? (
